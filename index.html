@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>伴行 · 适老化双端原型</title>
+<style>
+/* ============================================================
+   伴行 · 适老化双端  设计令牌
+   依据：《适老化理念下养老模块助行辅具设计研究》
+   - 莫兰迪色系 + 织物质感 + 弱化"病患标签"
+   - 老人端：字大 / 点大 / 对比强 / 不藏手势
+   ============================================================ */
+
+:root{
+  /* 纸与墨 —— 暖白纸感，不用纯白，减少眩光 */
+  --paper:#F6F2EA;
+  --card:#FFFFFF;
+  --ink:#26241F;
+  --ink-2:#57534B;
+  --ink-3:#8A857A;
+
+  /* 主色：莫兰迪灰绿（织物/木器感，非医疗蓝） */
+  --sage:#7C9A8B;
+  --sage-deep:#5C7C6C;
+  --sage-soft:#DCE6DF;
+
+  /* 暖陶（亲和/强调） */
+  --clay:#C4775A;
+  --clay-soft:#F3DFD6;
+
+  /* 状态色：紧急必须够狠，但不刺眼 */
+  --alert:#A8412F;
+  --alert-soft:#F5DCD6;
+  --amber:#C9913F;
+  --ok:#4F7C63;
+
+  --line:#E2DACC;
+  --line-2:#EFE9DD;
+
+  /* 圆角与阴影：圆润边缘 */
+  --r-xl:28px;
+  --r-lg:22px;
+  --r-md:16px;
+  --r-sm:12px;
+  --shadow:0 2px 0 rgba(38,36,31,.05), 0 10px 28px rgba(38,36,31,.07);
+  --shadow-press:0 1px 0 rgba(38,36,31,.08);
+
+  --font: "PingFang SC","Microsoft YaHei UI","Microsoft YaHei","Source Han Sans SC",sans-serif;
+}
+
+/* ── 老人端：一切放大 ───────────────────────────── */
+.phone.elder{
+  --fs-body:20px;
+  --fs-title:30px;
+  --fs-hero:38px;
+  --fs-btn:22px;
+  --fs-label:17px;
+  --tap:72px;          /* 主操作触摸区 */
+  --gap:16px;
+}
+
+/* ── 看护端：信息密度优先 ───────────────────────── */
+.phone.carer{
+  --fs-body:14px;
+  --fs-title:20px;
+  --fs-hero:24px;
+  --fs-btn:15px;
+  --fs-label:12px;
+  --tap:44px;
+  --gap:12px;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html,body{ margin:0; height:100%; }
+
+body{
+  font-family:var(--font);
+  color:#1C1A17;
+  background:
+    radial-gradient(1200px 600px at 20% -10%, #EDE6D8 0%, transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, #E4EAE3 0%, transparent 55%),
+    #201E22;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── 顶部说明条 ─────────────────────────────────── */
+.demo-bar{
+  flex:0 0 auto;
+  display:flex; align-items:center; gap:14px;
+  padding:12px 20px;
+  color:#EDE7DA;
+  font-size:13px;
+  letter-spacing:.02em;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.demo-bar b{ font-size:15px; letter-spacing:.06em; }
+.demo-bar .tag{
+  padding:3px 9px; border-radius:99px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14);
+  font-size:12px;
+}
+.demo-bar .hint{ margin-left:auto; color:#B8B1A2; font-size:12px; }
+
+/* ── 舞台：两台手机 ─────────────────────────────── */
+.stage{
+  flex:1 1 auto;
+  display:flex; align-items:center; justify-content:center;
+  gap:46px;
+  padding:18px;
+  overflow:hidden;
+}
+
+.phone-wrap{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.phone-label{
+  color:#CFC7B8; font-size:12px; letter-spacing:.14em;
+  display:flex; align-items:center; gap:8px;
+}
+.phone-label i{
+  width:7px; height:7px; border-radius:99px; background:var(--sage);
+  box-shadow:0 0 0 4px rgba(124,154,139,.18);
+  display:inline-block;
+}
+.phone-wrap.carer .phone-label i{ background:var(--clay); box-shadow:0 0 0 4px rgba(196,119,90,.18); }
+
+/* 手机外壳 */
+.phone{
+  position:relative;
+  width:390px; height:844px;
+  border-radius:46px;
+  background:var(--paper);
+  box-shadow:
+    0 0 0 11px #14131A,
+    0 0 0 13px #2E2C36,
+    0 28px 60px rgba(0,0,0,.5);
+  overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:transform .25s ease;
+}
+.phone::after{ /* 高光 */
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(150deg, rgba(255,255,255,.5) 0%, transparent 28%);
+  mix-blend-mode:soft-light;
+}
+
+/* 灵动岛 */
+.island{
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  width:112px; height:30px; border-radius:99px; background:#14131A;
+  z-index:50;
+}
+
+/* 状态栏 */
+.statusbar{
+  flex:0 0 auto;
+  height:56px;
+  padding:18px 26px 0;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:13px; font-weight:600; color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.01em;
+}
+.phone.elder .statusbar{ font-size:15px; }
+
+/* 屏幕容器 */
+.viewport{ position:relative; flex:1 1 auto; overflow:hidden; }
+
+/* 页面 */
+.page{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  background:var(--paper);
+  opacity:0; pointer-events:none;
+  transform:translateX(14px) scale(.995);
+  transition:opacity .22s ease, transform .26s cubic-bezier(.2,.7,.2,1);
+}
+.page.active{ opacity:1; pointer-events:auto; transform:none; }
+
+.page-scroll{
+  flex:1 1 auto; overflow-y:auto; overflow-x:hidden;
+  padding:0 18px 22px;
+  scrollbar-width:none;
+}
+/* 给悬浮的「求助」和标签栏留出空间，别压住内容 */
+.phone.elder .page-scroll{ padding-bottom:112px; }
+.phone.carer .page-scroll{ padding-bottom:86px; }
+.page-scroll::-webkit-scrollbar{ display:none; }
+
+/* ── 通用元件 ─────────────────────────────────── */
+.card{
+  background:var(--card);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow);
+  border:1px solid var(--line-2);
+}
+.phone.elder .card{ border-radius:var(--r-xl); }
+
+.h1{ font-size:var(--fs-hero); font-weight:800; letter-spacing:-.02em; line-height:1.24; color:var(--ink); }
+.h2{ font-size:var(--fs-title); font-weight:750; letter-spacing:-.01em; line-height:1.3; color:var(--ink); }
+.label{ font-size:var(--fs-label); color:var(--ink-3); letter-spacing:.04em; font-weight:600; }
+.muted{ color:var(--ink-3); }
+
+/* 大按钮（老人端核心） */
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  min-height:var(--tap);
+  padding:0 22px;
+  border:0; border-radius:var(--r-lg);
+  font-family:var(--font); font-size:var(--fs-btn); font-weight:750;
+  color:#fff; background:var(--sage-deep);
+  cursor:pointer;
+  transition:transform .12s ease, filter .12s ease, box-shadow .12s;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.btn:active{ transform:translateY(2px); box-shadow:var(--shadow-press); filter:brightness(.97); }
+.btn.ghost{ background:var(--card); color:var(--ink); border:2px solid var(--line); box-shadow:var(--shadow); }
+.btn.clay{ background:var(--clay); }
+.btn.alert{ background:var(--alert); }
+.btn.block{ width:100%; }
+.btn:disabled{ opacity:.45; }
+
+/* 底部标签栏（老人端超大） */
+.tabbar{
+  flex:0 0 auto;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  padding:10px 12px 26px;
+  background:linear-gradient(to top, #FFFDF8, rgba(255,253,248,.86));
+  border-top:1px solid var(--line-2);
+  backdrop-filter:blur(8px);
+}
+.tab{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  min-height:62px; border:0; background:transparent; cursor:pointer;
+  border-radius:18px;
+  font-family:var(--font); font-size:15px; font-weight:650; color:var(--ink-3);
+  transition:background .15s, color .15s;
+}
+.phone.elder .tab{ font-size:17px; font-weight:700; }
+.tab svg{ width:26px; height:26px; stroke-width:2; }
+.tab.active{ color:var(--sage-deep); background:var(--sage-soft); }
+.phone.carer .tabbar{ padding:8px 10px 20px; }
+.phone.carer .tab{ min-height:50px; font-size:12px; }
+.phone.carer .tab svg{ width:21px; height:21px; }
+
+/* 顶部返回栏 */
+.navbar{
+  flex:0 0 auto;
+  display:flex; align-items:center; gap:12px;
+  padding:4px 18px 10px;
+}
+.navbar .back{
+  width:44px; height:44px; border-radius:14px; border:1px solid var(--line);
+  background:var(--card); display:grid; place-items:center; cursor:pointer;
+  box-shadow:var(--shadow);
+}
+.phone.elder .navbar .back{ width:52px; height:52px; border-radius:16px; }
+.navbar .ttl{ font-size:var(--fs-title); font-weight:750; color:var(--ink); }
+
+/* 徽标/胶囊 */
+.pill{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 13px; border-radius:99px;
+  font-size:var(--fs-label); font-weight:700;
+  background:var(--sage-soft); color:var(--sage-deep);
+  white-space:nowrap;
+}
+.pill.warn{ background:#F7EAD2; color:#8A6620; }
+.pill.bad{ background:var(--alert-soft); color:var(--alert); }
+.pill.ghost{ background:transparent; border:1px solid var(--line); color:var(--ink-2); }
+.dot{ width:8px; height:8px; border-radius:99px; background:currentColor; display:inline-block; }
+
+/* 进度环 */
+.ring{ transform:rotate(-90deg); }
+.ring circle{ fill:none; stroke-linecap:round; }
+
+/* 分隔线 */
+.hr{ height:1px; background:var(--line-2); margin:14px 0; border:0; }
+
+/* 联动提示 */
+.flash{
+  position:absolute; left:50%; bottom:96px; transform:translateX(-50%) translateY(8px);
+  background:rgba(38,36,31,.9); color:#F6F2EA;
+  padding:11px 18px; border-radius:99px; font-size:13px; font-weight:600;
+  opacity:0; pointer-events:none; transition:all .25s ease; z-index:80;
+  white-space:nowrap; max-width:88%;
+}
+.flash.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* 看护端红点告警条 */
+.alert-bar{
+  display:none;
+  align-items:center; gap:10px;
+  margin:0 18px 12px; padding:12px 14px;
+  border-radius:16px; background:var(--alert-soft);
+  border:1px solid #E7BCB2; color:var(--alert);
+  font-size:13px; font-weight:700;
+  animation:pop .3s ease;
+}
+.alert-bar.show{ display:flex; }
+@keyframes pop{ from{ transform:scale(.97); opacity:0 } to{ transform:none; opacity:1 } }
+
+</style>
+<style>
+/* ============================================================
+   手机端适配：只显示一台手机，可切换老人端 / 看护端
+   仅在窄屏或触屏设备生效，桌面双机并排不受影响
+   ============================================================ */
+
+@media (max-width: 940px), (pointer: coarse) and (max-width: 1100px) {
+  body {
+    overflow: hidden;
+    height: 100vh;
+    background: #1F1D21;
+  }
+  .demo-bar { display: none; }
+
+  .stage {
+    height: 100vh;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    align-items: center;
+  }
+
+  .phone-wrap { display: none; }
+  .phone-wrap.mobile-active { display: flex; }
+
+  .phone-label { display: none; }
+
+  .phone {
+    transform: scale(var(--fit, 1));
+    transform-origin: center center;
+    margin: 0;
+    box-shadow: 0 0 0 8px #14131A, 0 0 0 10px #2E2C36, 0 18px 40px rgba(0,0,0,.55);
+  }
+
+  /* 顶部说明 + 切换 */
+  .mobile-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-top));
+    background: linear-gradient(to bottom, rgba(31,29,33,.96), rgba(31,29,33,.55));
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .mobile-bar .ttl {
+    color: #EDE7DA; font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  }
+  .mobile-bar .ttl small { display:block; color:#9E9789; font-size:10px; font-weight:500; letter-spacing:.02em; margin-top:2px; }
+  .seg {
+    display: flex; gap: 4px;
+    background: rgba(255,255,255,.08);
+    border-radius: 99px; padding: 4px;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .seg button {
+    border: 0; background: transparent;
+    color: #CFC7B8; font-size: 12px; font-weight: 700;
+    padding: 8px 14px; border-radius: 99px;
+    font-family: inherit; cursor: pointer;
+  }
+  .seg button.on { background: #F6F2EA; color: #26241F; }
+
+  .mobile-tip {
+    position: fixed;
+    left: 50%; transform: translateX(-50%);
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 999;
+    color: #9E9789; font-size: 11px;
+    background: rgba(31,29,33,.75);
+    padding: 6px 14px; border-radius: 99px;
+    border: 1px solid rgba(255,255,255,.07);
+    white-space: nowrap;
+  }
+}
+
+/* 桌面不显示这些 */
+.mobile-bar, .mobile-tip { display: none; }
+@media (max-width: 940px), (pointer: coarse) and (max-width: 1100px) {
+  .mobile-bar { display: flex; }
+  .mobile-tip { display: block; }
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="demo-bar">
+  <b>伴行</b>
+  <span class="tag">老人端</span>
+  <span class="tag">看护端</span>
+  <span class="hint">点两台手机试试 —— 老人端按「求助」会同步到看护端，看护端「远程驻车」会同步回老人端</span>
+</div>
+
+<main class="stage">
+
+  <!-- ══════════════════ 老人端 ══════════════════ -->
+  <div class="phone-wrap elder">
+    <div class="phone-label"><i></i>老人端 · 王奶奶 78 岁</div>
+    <div class="phone elder" id="p-elder">
+      <div class="island"></div>
+      <div class="statusbar"><span>8:12</span><span>◍ 5G ▮▮▮</span></div>
+
+      <div class="viewport" id="v-elder">
+
+        <!-- 今天 -->
+        <section class="page active" data-page="today">
+          <div class="page-scroll">
+            <div style="padding:6px 0 4px">
+              <div class="label">10月27日 · 周一 · 晴 18°</div>
+              <div class="h1" style="margin-top:6px">王奶奶<br>早上好呀</div>
+            </div>
+
+            <div class="card" style="padding:20px;margin:18px 0;display:flex;gap:16px;align-items:center">
+              <div style="width:56px;height:56px;border-radius:18px;background:var(--sage-soft);display:grid;place-items:center;font-size:28px">☀️</div>
+              <div>
+                <div style="font-size:22px;font-weight:750;color:var(--ink)">今天适合出门</div>
+                <div class="muted" style="font-size:17px;margin-top:3px">风不大，走 20 分钟正好</div>
+              </div>
+            </div>
+
+            <div class="label" style="margin:22px 0 10px">今天要做的三件事</div>
+
+            <div class="card" id="task-med" style="padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:14px;background:var(--clay-soft);display:grid;place-items:center;font-size:22px">💊</div>
+              <div style="flex:1">
+                <div style="font-size:21px;font-weight:750">吃降压药</div>
+                <div class="muted" style="font-size:16px">8:30 · 一片</div>
+              </div>
+              <span class="pill" id="task-med-state">待完成</span>
+            </div>
+
+            <div class="card" style="padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:14px;background:var(--sage-soft);display:grid;place-items:center;font-size:22px">🚶</div>
+              <div style="flex:1">
+                <div style="font-size:21px;font-weight:750">出去走一走</div>
+                <div class="muted" style="font-size:16px">20 分钟 · 用助行器</div>
+              </div>
+              <span class="pill">差 300 步</span>
+            </div>
+
+            <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:14px;background:#E8E3D6;display:grid;place-items:center;font-size:22px">📞</div>
+              <div style="flex:1">
+                <div style="font-size:21px;font-weight:750">和女儿说说话</div>
+                <div class="muted" style="font-size:16px">昨天没聊上</div>
+              </div>
+              <span class="pill ghost">现在打</span>
+            </div>
+
+            <div style="display:grid;gap:12px;margin:22px 0 8px">
+              <button class="btn block" onclick="elderGo('family')">👩‍👧 一键找家人</button>
+              <button class="btn block ghost" onclick="elderGo('walker')">🦯 我的助行器</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 助行器 -->
+        <section class="page" data-page="walker">
+          <div class="navbar">
+            <button class="back" onclick="elderGo('today')">←</button>
+            <div class="ttl">我的助行器</div>
+          </div>
+          <div class="page-scroll">
+            <div class="card" style="padding:18px 20px;text-align:center;margin-bottom:4px">
+              <div style="position:relative;width:158px;height:158px;margin:0 auto">
+                <svg class="ring" width="158" height="158" viewBox="0 0 158 158">
+                  <circle cx="79" cy="79" r="64" stroke="var(--line-2)" stroke-width="13"/>
+                  <circle cx="79" cy="79" r="64" stroke="var(--sage)" stroke-width="13"
+                          stroke-dasharray="402" stroke-dashoffset="88"/>
+                </svg>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+                  <div style="font-size:46px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1">78%</div>
+                  <div class="muted" style="font-size:16px">还够走 6 小时</div>
+                </div>
+              </div>
+              <div><span class="pill" id="parkState" style="margin-top:16px">已解锁 · 可以走</span></div>
+            </div>
+
+            <div class="label" style="margin:16px 0 8px">换一种用法</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <button class="btn ghost" style="flex-direction:column;min-height:84px;font-size:18px">🚶<br>助行</button>
+              <button class="btn ghost" style="flex-direction:column;min-height:84px;font-size:18px">🪑<br>坐着歇</button>
+              <button class="btn ghost" style="flex-direction:column;min-height:84px;font-size:17px">👥<br>他人推</button>
+            </div>
+
+            <div style="margin:16px 0 12px">
+              <button class="btn block alert" id="parkBtn" onclick="togglePark('elder')">🔒 一键驻车</button>
+              <div class="muted" style="text-align:center;font-size:16px;margin-top:10px">要坐下或停着聊天时按一下，轮子会锁住</div>
+            </div>
+
+            <div class="label" style="margin:6px 0 10px">装着的模块</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <span class="pill">🪑 座椅模块</span>
+              <span class="pill">🦯 伸缩拐杖</span>
+              <span class="pill">🛞 空心轮胎</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 出行 -->
+        <section class="page" data-page="go">
+          <div class="navbar">
+            <button class="back" onclick="elderGo('today')">←</button>
+            <div class="ttl">去哪儿走走</div>
+          </div>
+          <div class="page-scroll">
+            <div class="card" style="padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px" onclick="elderGo('nav')">
+              <div style="font-size:30px">🥬</div>
+              <div style="flex:1">
+                <div style="font-size:22px;font-weight:750">楼下买菜</div>
+                <div class="muted" style="font-size:16px">180 米 · 约 6 分钟</div>
+              </div>
+              <div class="pill">最近</div>
+            </div>
+            <div class="card" style="padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px" onclick="elderGo('nav')">
+              <div style="font-size:30px">🌳</div>
+              <div style="flex:1">
+                <div style="font-size:22px;font-weight:750">河边公园</div>
+                <div class="muted" style="font-size:16px">600 米 · 有长椅 3 处</div>
+              </div>
+            </div>
+            <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px" onclick="elderGo('nav')">
+              <div style="font-size:30px">🏫</div>
+              <div style="flex:1">
+                <div style="font-size:22px;font-weight:750">孙子学校</div>
+                <div class="muted" style="font-size:16px">1.2 公里 · 有点远</div>
+              </div>
+            </div>
+            <div style="margin-top:22px">
+              <button class="btn block" onclick="elderGo('nav')">带我去</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 导航 -->
+        <section class="page" data-page="nav">
+          <div class="navbar">
+            <button class="back" onclick="elderGo('go')">←</button>
+            <div class="ttl">去河边公园</div>
+          </div>
+          <div class="page-scroll">
+            <div class="card" style="padding:0;overflow:hidden">
+              <svg viewBox="0 0 354 260" style="width:100%;display:block;background:#EAEDE6">
+                <rect width="354" height="260" fill="#EAEDE6"/>
+                <g stroke="#D8DCD0" stroke-width="9" stroke-linecap="round">
+                  <path d="M-10 80 H364"/><path d="M-10 190 H364"/>
+                  <path d="M90 -10 V270"/><path d="M250 -10 V270"/>
+                </g>
+                <path d="M60 220 Q60 150 130 150 T250 110" fill="none" stroke="#7C9A8B" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 14"/>
+                <circle cx="60" cy="220" r="9" fill="#5C7C6C"/>
+                <circle cx="250" cy="110" r="11" fill="#C4775A"/>
+                <text x="270" y="114" font-size="13" fill="#57534B" font-family="sans-serif">公园</text>
+                <rect x="150" y="188" width="34" height="14" rx="4" fill="#C9913F" opacity=".8"/>
+                <text x="150" y="180" font-size="11" fill="#8A6620" font-family="sans-serif">长椅</text>
+              </svg>
+              <div style="padding:18px 20px">
+                <div style="font-size:24px;font-weight:800;line-height:1.4">前方 50 米右转<br>路边有长椅可以歇脚</div>
+              </div>
+            </div>
+            <div style="display:grid;gap:12px;margin-top:18px">
+              <button class="btn block" onclick="elderGo('today');flash('elder','已到家，今天走了 1,860 步')">我到了</button>
+              <button class="btn block ghost" onclick="flash('elder','已通知女儿：你在河边公园')">告诉她我在哪儿</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 吃药 -->
+        <section class="page" data-page="meds">
+          <div class="navbar">
+            <button class="back" onclick="elderGo('today')">←</button>
+            <div class="ttl">该吃药了</div>
+          </div>
+          <div class="page-scroll">
+            <div class="card" style="padding:30px 22px;text-align:center;background:linear-gradient(160deg,#FFF8F2,#FDF1E9)">
+              <div style="font-size:64px;line-height:1">💊</div>
+              <div style="font-size:32px;font-weight:800;margin-top:14px">降压药</div>
+              <div class="muted" style="font-size:20px;margin-top:6px">一片 · 早饭后</div>
+            </div>
+            <div style="display:grid;gap:14px;margin-top:24px">
+              <button class="btn block" style="min-height:88px;font-size:26px" onclick="takeMeds()">✓ 我吃了</button>
+              <button class="btn block ghost" style="min-height:72px" onclick="elderGo('today');flash('elder','20 分钟后我再提醒你')">等一会儿</button>
+            </div>
+            <div class="label" style="margin:26px 0 10px">今天已经吃了</div>
+            <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:12px">
+              <span class="pill">✓</span><div style="font-size:19px">钙片 · 8:05</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 家人 -->
+        <section class="page" data-page="family">
+          <div class="navbar">
+            <button class="back" onclick="elderGo('today')">←</button>
+            <div class="ttl">找家人</div>
+          </div>
+          <div class="page-scroll">
+            <div style="display:grid;gap:14px">
+              <button class="btn block" style="min-height:112px;font-size:26px" onclick="flash('elder','正在给小雷打视频…');carerAlert('女儿发起视频通话 · 老人端响铃')">📹 视频通话</button>
+              <button class="btn block ghost" style="min-height:96px;font-size:24px" onclick="flash('elder','正在拨语音…')">☎️ 语音通话</button>
+              <button class="btn block ghost" style="min-height:96px;font-size:24px" onclick="flash('elder','照片已发到家人群')">📷 发张照片</button>
+            </div>
+            <div class="label" style="margin:26px 0 10px">最近联系</div>
+            <div class="card" style="padding:18px 20px">
+              <div style="display:flex;justify-content:space-between;font-size:19px">
+                <span>女儿 · 小雷</span><span class="muted">昨天 20:14</span>
+              </div>
+              <div class="muted" style="font-size:16px;margin-top:4px">通话 6 分钟</div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /viewport -->
+
+      <!-- SOS 悬浮 -->
+      <button id="sosBtn" onclick="startSos()" style="position:absolute;right:16px;bottom:104px;z-index:70;width:72px;height:72px;border-radius:99px;border:0;background:var(--alert);color:#fff;font-size:17px;font-weight:800;line-height:1.15;box-shadow:0 8px 22px rgba(168,65,47,.42);cursor:pointer">求助<br><span style="font-size:26px">🆘</span></button>
+
+      <!-- SOS 倒计时层 -->
+      <div id="sosLayer" style="position:absolute;inset:0;z-index:90;background:rgba(38,36,31,.94);display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:30px">
+        <div style="color:#F6F2EA;font-size:24px;font-weight:700">马上通知女儿</div>
+        <div id="sosCount" style="color:#fff;font-size:96px;font-weight:800;font-variant-numeric:tabular-nums">3</div>
+        <button class="btn block" style="background:#F6F2EA;color:#26241F;min-height:84px;font-size:26px" onclick="cancelSos()">不用了，取消</button>
+        <div style="color:#C9C2B4;font-size:16px">如果不点，3 秒后自动打给她</div>
+      </div>
+
+      <!-- 标签栏 -->
+      <nav class="tabbar">
+        <button class="tab active" data-tab="today" onclick="elderGo('today')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>今天</button>
+        <button class="tab" data-tab="walker" onclick="elderGo('walker')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 21V7a3 3 0 0 1 6 0v14"/><path d="M17 21V9"/><circle cx="17" cy="5" r="2"/></svg>助行</button>
+        <button class="tab" data-tab="go" onclick="elderGo('go')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>出行</button>
+        <button class="tab" data-tab="family" onclick="elderGo('family')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><circle cx="10" cy="7" r="3"/><path d="M17 11a3 3 0 1 0 0-6"/></svg>家人</button>
+      </nav>
+      <div class="flash" id="flash-elder"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ 看护端 ══════════════════ -->
+  <div class="phone-wrap carer">
+    <div class="phone-label"><i></i>看护端 · 女儿 小雷</div>
+    <div class="phone carer" id="p-carer">
+      <div class="island"></div>
+      <div class="statusbar"><span>8:12</span><span>◍ 5G ▮▮▮</span></div>
+
+      <div class="alert-bar" id="carerAlert">⚠️ <span id="carerAlertText">王奶奶按了求助</span></div>
+
+      <div class="viewport" id="v-carer">
+
+        <!-- 首页 -->
+        <section class="page active" data-page="home">
+          <div class="page-scroll">
+            <div style="display:flex;align-items:center;gap:12px;padding:4px 0 2px">
+              <div style="width:44px;height:44px;border-radius:14px;background:var(--clay-soft);display:grid;place-items:center;font-size:22px">👵</div>
+              <div style="flex:1">
+                <div style="font-size:19px;font-weight:800">王奶奶 <span class="muted" style="font-weight:600;font-size:13px">78 岁 · 我妈</span></div>
+                <div style="font-size:12px;color:var(--ok);font-weight:700;margin-top:2px"><span class="dot"></span> 在家 · 一切正常</div>
+              </div>
+              <button class="btn" style="min-height:38px;padding:0 14px;font-size:13px" onclick="flash('carer','正在呼叫王奶奶…')">打电话</button>
+            </div>
+
+            <div class="card" style="padding:16px;margin-top:14px">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
+                <div><div style="font-size:22px;font-weight:800">1,240</div><div class="muted" style="font-size:11px">今日步数</div></div>
+                <div><div style="font-size:22px;font-weight:800">78%</div><div class="muted" style="font-size:11px">助行器电量</div></div>
+                <div><div style="font-size:22px;font-weight:800" id="medCount">1/3</div><div class="muted" style="font-size:11px">用药完成</div></div>
+              </div>
+            </div>
+
+            <div class="label" style="margin:16px 0 8px">快捷</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <button class="btn ghost" style="flex-direction:column;min-height:64px;font-size:11px;gap:2px" onclick="carerGo('live')">📍<br>看位置</button>
+              <button class="btn ghost" style="flex-direction:column;min-height:64px;font-size:11px;gap:2px" onclick="carerGo('plan')">⏰<br>设提醒</button>
+              <button class="btn ghost" style="flex-direction:column;min-height:64px;font-size:11px;gap:2px" onclick="carerGo('modules')">🧩<br>模块</button>
+            </div>
+
+            <div class="label" style="margin:18px 0 8px">今天</div>
+            <div class="card" style="padding:14px 16px">
+              <div style="display:flex;gap:10px;font-size:13px;padding:6px 0"><span class="muted" style="width:42px">8:30</span><span>吃了降压药 ✓</span></div>
+              <div style="display:flex;gap:10px;font-size:13px;padding:6px 0"><span class="muted" style="width:42px">9:10</span><span>出门散步，用助行器 22 分钟</span></div>
+              <div style="display:flex;gap:10px;font-size:13px;padding:6px 0"><span class="muted" style="width:42px">9:32</span><span>回家，坐下休息</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 实时 -->
+        <section class="page" data-page="live">
+          <div class="navbar">
+            <button class="back" onclick="carerGo('home')">←</button>
+            <div class="ttl">实时状态</div>
+          </div>
+          <div class="page-scroll">
+            <div class="card" style="padding:0;overflow:hidden">
+              <svg viewBox="0 0 354 200" style="width:100%;display:block;background:#EAEDE6">
+                <rect width="354" height="200" fill="#EAEDE6"/>
+                <g stroke="#D8DCD0" stroke-width="7" stroke-linecap="round">
+                  <path d="M-10 60 H364"/><path d="M-10 150 H364"/><path d="M120 -10 V210"/>
+                </g>
+                <circle cx="150" cy="110" r="14" fill="#C4775A"/>
+                <circle cx="150" cy="110" r="30" fill="#C4775A" opacity=".16"/>
+                <text x="172" y="114" font-size="12" fill="#57534B" font-family="sans-serif">离小区门口 40m</text>
+              </svg>
+              <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:15px;font-weight:800">河边步道</div><div class="muted" style="font-size:12px">距家 600 m · 已出门 12 分钟</div></div>
+                <span class="pill">步行中</span>
+              </div>
+            </div>
+
+            <div class="label" style="margin:16px 0 8px">步态 · 最近 7 天</div>
+            <div class="card" style="padding:14px 16px">
+              <svg viewBox="0 0 320 74" style="width:100%;height:74px">
+                <polyline points="10,52 55,48 100,55 145,44 190,49 235,41 280,46" fill="none" stroke="#7C9A8B" stroke-width="3" stroke-linecap="round"/>
+                <polyline points="10,26 55,29 100,24 145,30 190,27 235,32 280,28" fill="none" stroke="#C9913F" stroke-width="2.4" stroke-dasharray="5 5" stroke-linecap="round"/>
+              </svg>
+              <div style="display:flex;gap:14px;font-size:11px;margin-top:6px">
+                <span><span style="color:#7C9A8B">■</span> 步频 稳</span>
+                <span><span style="color:#C9913F">■</span> 身体倾斜 轻微</span>
+              </div>
+            </div>
+
+            <div class="label" style="margin:16px 0 8px">远程操作</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <button class="btn ghost" style="min-height:52px;font-size:13px" id="parkRemote" onclick="togglePark('carer')">🔒 远程驻车</button>
+              <button class="btn ghost" style="min-height:52px;font-size:13px" onclick="flash('carer','助行器响铃，老人端会听到')">🔔 响铃找它</button>
+            </div>
+            <div class="muted" id="parkHint" style="font-size:11px;margin-top:8px">驻车后轮子锁住，老人起身更稳</div>
+          </div>
+        </section>
+
+        <!-- 模块 -->
+        <section class="page" data-page="modules">
+          <div class="navbar">
+            <button class="back" onclick="carerGo('home')">←</button>
+            <div class="ttl">模块管理</div>
+          </div>
+          <div class="page-scroll">
+            <div class="label" style="margin:4px 0 8px">已装 · 3 个</div>
+            <div class="card" style="padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:20px">🪑</span><div style="flex:1"><div style="font-size:14px;font-weight:750">座椅模块</div><div class="muted" style="font-size:11px">累了随时坐下 · 承重 100kg</div></div><span class="pill">正常</span>
+            </div>
+            <div class="card" style="padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:20px">🦯</span><div style="flex:1"><div style="font-size:14px;font-weight:750">伸缩拐杖</div><div class="muted" style="font-size:11px">钳夹结构 · 收拢 42cm</div></div><span class="pill">正常</span>
+            </div>
+            <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:20px">🛞</span><div style="flex:1"><div style="font-size:14px;font-weight:750">空心轮胎</div><div class="muted" style="font-size:11px">减震 · 前轮万向</div></div><span class="pill">正常</span>
+            </div>
+
+            <div class="label" style="margin:18px 0 8px">建议加装</div>
+            <div class="card" style="padding:14px 16px;background:linear-gradient(160deg,#FFF9F3,#FDF2E8)">
+              <div style="font-size:14px;font-weight:750">☔ 防滑雨罩</div>
+              <div class="muted" style="font-size:12px;margin-top:4px">本周有 3 天雨 · 老人雨天出门易滑</div>
+              <button class="btn" style="min-height:40px;font-size:13px;margin-top:10px;width:100%" onclick="flash('carer','已加入加装清单，可预约上门')">加入清单</button>
+            </div>
+
+            <div class="label" style="margin:18px 0 8px">固件</div>
+            <div class="card" style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13px">v1.0.3 <span class="muted">· 已是最新</span></div>
+              <span class="pill">✓</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 用药 -->
+        <section class="page" data-page="meds">
+          <div class="navbar">
+            <button class="back" onclick="carerGo('home')">←</button>
+            <div class="ttl">用药与护理</div>
+          </div>
+          <div class="page-scroll">
+            <div class="label" style="margin:4px 0 8px">今天的药</div>
+            <div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+              <span class="pill">✓</span><div style="flex:1;font-size:13px">降压药 · 8:30</div><span class="muted" style="font-size:11px">已确认</span>
+            </div>
+            <div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+              <span class="pill warn">待</span><div style="flex:1;font-size:13px">阿司匹林 · 12:30</div><span class="muted" style="font-size:11px">还没到点</span>
+            </div>
+            <div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:10px">
+              <span class="pill ghost">—</span><div style="flex:1;font-size:13px">钙片 · 19:00</div><span class="muted" style="font-size:11px">晚上</span>
+            </div>
+
+            <div class="label" style="margin:18px 0 8px">足部护理 <span class="muted" style="font-weight:500;letter-spacing:0">· 89% 老人有足部问题</span></div>
+            <div class="card" style="padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:20px">🦶</span>
+              <div style="flex:1"><div style="font-size:13px;font-weight:750">泡脚提醒</div><div class="muted" style="font-size:11px">每天 20:30 · 水温 40°C</div></div>
+              <span class="pill">开</span>
+            </div>
+            <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:20px">👟</span>
+              <div style="flex:1"><div style="font-size:13px;font-weight:750">换鞋垫</div><div class="muted" style="font-size:11px">每 2 周 · 上次 10 月 18 日</div></div>
+              <span class="pill warn">该换了</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 提醒 -->
+        <section class="page" data-page="plan">
+          <div class="navbar">
+            <button class="back" onclick="carerGo('home')">←</button>
+            <div class="ttl">提醒与日程</div>
+          </div>
+          <div class="page-scroll">
+            <div class="label" style="margin:4px 0 8px">推送给她</div>
+            <div class="card" style="padding:4px 16px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line-2)">
+                <div><div style="font-size:13px;font-weight:700">吃药提醒</div><div class="muted" style="font-size:11px">8:30 / 12:30 / 19:00</div></div>
+                <span class="pill">开</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line-2)">
+                <div><div style="font-size:13px;font-weight:700">散步提醒</div><div class="muted" style="font-size:11px">每天 9:00 · 20 分钟</div></div>
+                <span class="pill">开</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0">
+                <div><div style="font-size:13px;font-weight:700">泡脚提醒</div><div class="muted" style="font-size:11px">每天 20:30</div></div>
+                <span class="pill">开</span>
+              </div>
+            </div>
+
+            <div class="label" style="margin:18px 0 8px">日程</div>
+            <div class="card" style="padding:14px 16px;display:flex;gap:12px;align-items:center">
+              <div style="text-align:center;min-width:44px"><div style="font-size:18px;font-weight:800">30</div><div class="muted" style="font-size:10px">10月</div></div>
+              <div style="flex:1"><div style="font-size:13px;font-weight:750">社区医院复诊</div><div class="muted" style="font-size:11px">上午 9:30 · 记得带病历</div></div>
+              <span class="pill ghost">提醒</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 周报 -->
+        <section class="page" data-page="report">
+          <div class="navbar">
+            <button class="back" onclick="carerGo('home')">←</button>
+            <div class="ttl">本周概况</div>
+          </div>
+          <div class="page-scroll">
+            <div class="card" style="padding:16px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div><div class="muted" style="font-size:11px">出门</div><div style="font-size:25px;font-weight:800">4 <span style="font-size:12px;font-weight:600;color:var(--ok)">↑1</span></div><div class="muted" style="font-size:10px">次 · 上周 3 次</div></div>
+                <div><div class="muted" style="font-size:11px">日均步数</div><div style="font-size:25px;font-weight:800">1,203</div><div class="muted" style="font-size:10px">比上周 +180</div></div>
+                <div><div class="muted" style="font-size:11px">平衡风险</div><div style="font-size:25px;font-weight:800;color:var(--ok)">低</div><div class="muted" style="font-size:10px">无明显异常</div></div>
+                <div><div class="muted" style="font-size:11px">用药依从</div><div style="font-size:25px;font-weight:800">92%</div><div class="muted" style="font-size:10px">漏了 2 次</div></div>
+              </div>
+            </div>
+
+            <div class="label" style="margin:18px 0 8px">建议</div>
+            <div class="card" style="padding:14px 16px;margin-bottom:8px">
+              <div style="font-size:13px;font-weight:700">① 出门次数在变好</div>
+              <div class="muted" style="font-size:12px;margin-top:4px">本周 4 次，比上周多 1 次。继续保持每天 20 分钟。</div>
+            </div>
+            <div class="card" style="padding:14px 16px">
+              <div style="font-size:13px;font-weight:700">② 晚上那次药容易漏</div>
+              <div class="muted" style="font-size:12px;margin-top:4px">19:00 的钙片两次没确认。可以让她把药盒放在饭桌上。</div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /viewport -->
+
+      <nav class="tabbar">
+        <button class="tab active" data-tab="home" onclick="carerGo('home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>首页</button>
+        <button class="tab" data-tab="live" onclick="carerGo('live')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M5 12a7 7 0 0 1 14 0"/><path d="M2 12a10 10 0 0 1 20 0"/></svg>实时</button>
+        <button class="tab" data-tab="meds" onclick="carerGo('meds')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3.2" y="8.4" width="17.6" height="7.2" rx="3.6" transform="rotate(-45 12 12)"/><path d="M9 15l6-6"/></svg>用药</button>
+        <button class="tab" data-tab="report" onclick="carerGo('report')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>周报</button>
+      </nav>
+      <div class="flash" id="flash-carer"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ── 两端状态（真实联动） ─────────────────────── */
+const S = { parked:false, medsTaken:1, sosOn:false };
+
+/* 页面切换 */
+function go(phone, name){
+  const root = document.getElementById(phone === 'elder' ? 'v-elder' : 'v-carer');
+  root.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === name));
+  const bar = document.querySelector(phone === 'elder' ? '#p-elder .tabbar' : '#p-carer .tabbar');
+  bar.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  const sc = root.querySelector('.page.active .page-scroll');
+  if (sc) sc.scrollTop = 0;
+}
+/* ⚠️ 必须用 function 声明：inline onclick 只认 window 上的属性，
+   用 const 箭头函数的话全局拿不到（踩过的坑） */
+function elderGo(n){ go('elder', n); }
+function carerGo(n){ go('carer', n); }
+
+/* 轻提示 */
+function flash(phone, text){
+  const el = document.getElementById('flash-' + phone);
+  el.textContent = text; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2100);
+}
+
+/* 一键驻车：两端同步 */
+function togglePark(by){
+  S.parked = !S.parked;
+  const stateEl = document.getElementById('parkState');
+  const btn = document.getElementById('parkBtn');
+  const remote = document.getElementById('parkRemote');
+  const hint = document.getElementById('parkHint');
+
+  if (S.parked){
+    stateEl.textContent = '已驻车 · 轮子锁住';
+    stateEl.className = 'pill warn';
+    btn.textContent = '🔓 解锁，可以走了';
+    btn.classList.remove('alert'); btn.style.background = 'var(--sage-deep)';
+    if (remote){ remote.textContent = '🔓 远程解锁'; remote.style.background = 'var(--sage-soft)'; }
+    if (hint) hint.textContent = '已锁住。她起身时会更有支撑。';
+    flash('elder', '已驻车，轮子锁住了');
+    flash('carer', '已远程驻车');
+  } else {
+    stateEl.textContent = '已解锁 · 可以走';
+    stateEl.className = 'pill';
+    btn.textContent = '🔒 一键驻车';
+    btn.classList.add('alert'); btn.style.background = '';
+    if (remote){ remote.textContent = '🔒 远程驻车'; remote.style.background = ''; }
+    if (hint) hint.textContent = '驻车后轮子锁住，老人起身更稳';
+    flash('elder', '已解锁');
+    flash('carer', '已解锁');
+  }
+}
+
+/* 吃药：老人端确认 → 两端同步 */
+function takeMeds(){
+  if (S.medsTaken < 3) S.medsTaken = Math.min(3, S.medsTaken + 1);
+  document.getElementById('medCount').textContent = S.medsTaken + '/3';
+  document.getElementById('task-med-state').textContent = '✓ 吃了';
+  document.getElementById('task-med-state').className = 'pill';
+  const card = document.getElementById('task-med');
+  card.style.background = 'linear-gradient(160deg,#F2F7F3,#EAF2EC)';
+  flash('elder', '记下了，真棒');
+  flash('carer', '王奶奶确认吃了药');
+  setTimeout(() => elderGo('today'), 650);
+}
+
+/* 求助：3 秒倒计时 → 通知看护端 */
+let sosTimer = null;
+function startSos(){
+  S.sosOn = true;
+  const layer = document.getElementById('sosLayer');
+  const cnt = document.getElementById('sosCount');
+  layer.style.display = 'flex';
+  let n = 3; cnt.textContent = n;
+  flash('carer', '⚠️ 王奶奶按了求助');
+  setCarerAlert('王奶奶按了求助 · 已通知你');
+  sosTimer = setInterval(() => {
+    n--; cnt.textContent = n > 0 ? n : '0';
+    if (n <= 0){
+      clearInterval(sosTimer);
+      layer.style.display = 'none';
+      S.sosOn = false;
+      flash('elder', '已打给女儿，正在接通…');
+      setCarerAlert('已接通 · 王奶奶的求助电话');
+    }
+  }, 1000);
+}
+function cancelSos(){
+  clearInterval(sosTimer);
+  document.getElementById('sosLayer').style.display = 'none';
+  S.sosOn = false;
+  flash('elder', '好的，不打了');
+  setCarerAlert('王奶奶取消了求助', true);
+}
+function setCarerAlert(text, clearAfter){
+  const bar = document.getElementById('carerAlert');
+  document.getElementById('carerAlertText').textContent = text;
+  bar.classList.add('show');
+  if (clearAfter) setTimeout(() => bar.classList.remove('show'), 2600);
+}
+function carerAlert(text){ setCarerAlert(text); }
+
+/* 键盘快捷键：1-4 切老人端，Q-W-E-R 切看护端 */
+document.addEventListener('keydown', e => {
+  const elderMap = {'1':'today','2':'walker','3':'go','4':'family'};
+  const carerMap = {'q':'home','w':'live','e':'meds','r':'report'};
+  if (elderMap[e.key]) elderGo(elderMap[e.key]);
+  if (carerMap[e.key]) carerGo(carerMap[e.key]);
+});
+</script>
+<script>
+/* 手机端：自动适配缩放 + 老人端/看护端切换 */
+(function () {
+  const isMobile = () => window.matchMedia('(max-width: 940px)').matches;
+
+  // 手机端顶部栏
+  const bar = document.createElement('div');
+  bar.className = 'mobile-bar';
+  bar.innerHTML = '<div class="ttl">伴行 · 适老化双端<small>点着试，能切换两端</small></div>' +
+    '<div class="seg"><button data-p="elder" class="on">老人端</button><button data-p="carer">看护端</button></div>';
+
+  const tip = document.createElement('div');
+  tip.className = 'mobile-tip';
+  tip.textContent = '点按钮、试试「求助」和「驻车」的联动';
+
+  document.body.appendChild(bar);
+  document.body.appendChild(tip);
+
+  const elder = document.querySelector('.phone-wrap.elder');
+  const carer = document.querySelector('.phone-wrap.carer');
+
+  function show(which) {
+    elder.classList.toggle('mobile-active', which === 'elder');
+    carer.classList.toggle('mobile-active', which === 'carer');
+    bar.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.p === which));
+    fit();
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+
+  // 按可用空间缩放，保持整机可见
+  function fit() {
+    if (!isMobile()) {
+      const p = document.querySelectorAll('.phone');
+      p.forEach(el => el.style.setProperty('--fit', 1));
+      return;
+    }
+    const vw = window.innerWidth;
+    const vh = window.innerHeight - 56; // 顶部栏
+    const phoneW = 390 + 26;            // 外壳阴影占位
+    const phoneH = 844 + 26;
+    const s = Math.min(vw / phoneW, vh / phoneH, 1.06);
+    document.querySelectorAll('.phone').forEach(el => el.style.setProperty('--fit', s.toFixed(3)));
+    // 居中偏移：顶部栏高度的一半
+    document.querySelectorAll('.phone').forEach(el => {
+      el.style.marginTop = Math.max(0, (vh - phoneH * s) / 2) + 'px';
+    });
+  }
+
+  bar.querySelectorAll('.seg button').forEach(b => {
+    b.addEventListener('click', () => show(b.dataset.p));
+  });
+
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', () => setTimeout(fit, 150));
+
+  // 首页默认给老人端
+  function init() {
+    if (isMobile()) { show('elder'); } else {
+      elder.classList.remove('mobile-active');
+      carer.classList.remove('mobile-active');
+      fit();
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  setTimeout(init, 120);
+})();
+
+</script>
+</body>
+</html>
