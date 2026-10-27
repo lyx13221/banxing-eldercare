@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+  <defs></defs>
+  <g>
+    <rect x="139.0" y="12.0" width="112.0" height="30.0" rx="99.0" fill="#14131a"/>
+    <text x="26.0" y="39.4" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="600" fill="#57534b">8:12</text>
+    <text x="283.3" y="38.9" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="600" fill="#57534b">◍ 5G ▮▮▮</text>
+  </g>
+  <g>
+    <rect x="0.0" y="56.0" width="390.0" height="709.0" rx="0.0" fill="#f6f2ea"/>
+    <rect x="18.0" y="60.0" width="44.0" height="44.0" rx="14.0" fill="#ffffff" stroke="#e2dacc" stroke-width="1"/>
+    <text x="33.3" y="85.2" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13.3333" font-weight="400" fill="#000000">←</text>
+    <text x="74.0" y="85.5" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="20" font-weight="750" fill="#26241f">用药与护理</text>
+    <text x="18.0" y="127.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="600" fill="#8a857a">今天的药</text>
+    <rect x="18.0" y="141.0" width="354.0" height="56.0" rx="22.0" fill="#ffffff" stroke="#efe9dd" stroke-width="1"/>
+    <rect x="35.0" y="154.0" width="35.0" height="30.0" rx="99.0" fill="#dce6df"/>
+    <text x="48.0" y="171.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="700" fill="#5c7c6c">✓</text>
+    <text x="80.0" y="171.4" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="400" fill="#1c1a17">降压药 · 8:30</text>
+    <text x="322.0" y="170.8" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="11" font-weight="400" fill="#8a857a">已确认</text>
+    <rect x="18.0" y="205.0" width="354.0" height="55.0" rx="22.0" fill="#ffffff" stroke="#efe9dd" stroke-width="1"/>
+    <rect x="35.0" y="218.0" width="38.0" height="29.0" rx="99.0" fill="#f7ead2"/>
+    <text x="48.0" y="234.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="700" fill="#8a6620">待</text>
+    <text x="83.0" y="234.9" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="400" fill="#1c1a17">阿司匹林 · 12:30</text>
+    <text x="311.0" y="234.3" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="11" font-weight="400" fill="#8a857a">还没到点</text>
+    <rect x="18.0" y="268.0" width="354.0" height="57.0" rx="22.0" fill="#ffffff" stroke="#efe9dd" stroke-width="1"/>
+    <rect x="35.0" y="281.0" width="41.0" height="31.0" rx="99.0" fill="none" opacity="0" stroke="#e2dacc" stroke-width="1"/>
+    <text x="49.0" y="298.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="700" fill="#57534b">—</text>
+    <text x="86.0" y="298.9" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="400" fill="#1c1a17">钙片 · 19:00</text>
+    <text x="333.0" y="298.3" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="11" font-weight="400" fill="#8a857a">晚上</text>
+    <text x="18.0" y="352.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="600" fill="#8a857a">足部护理</text>
+    <text x="72.0" y="352.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="500" fill="#8a857a">· 89% 老人有足部问题</text>
+    <rect x="18.0" y="366.0" width="354.0" height="60.0" rx="22.0" fill="#ffffff" stroke="#efe9dd" stroke-width="1"/>
+    <text x="35.0" y="400.5" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="20" font-weight="400" fill="#1c1a17">🦶</text>
+    <text x="74.5" y="391.4" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="750" fill="#1c1a17">泡脚提醒</text>
+    <text x="74.5" y="405.8" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="11" font-weight="400" fill="#8a857a">每天 20:30 · 水温 40°C</text>
+    <rect x="317.0" y="381.5" width="38.0" height="29.0" rx="99.0" fill="#dce6df"/>
+    <text x="330.0" y="398.1" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="700" fill="#5c7c6c">开</text>
+    <rect x="18.0" y="434.0" width="354.0" height="60.0" rx="22.0" fill="#ffffff" stroke="#efe9dd" stroke-width="1"/>
+    <text x="35.0" y="468.5" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="20" font-weight="400" fill="#1c1a17">👟</text>
+    <text x="74.5" y="459.4" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="13" font-weight="750" fill="#1c1a17">换鞋垫</text>
+    <text x="74.5" y="473.8" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="11" font-weight="400" fill="#8a857a">每 2 周 · 上次 10 月 18 日</text>
+    <rect x="293.0" y="449.5" width="62.0" height="29.0" rx="99.0" fill="#f7ead2"/>
+    <text x="306.0" y="466.1" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="700" fill="#8a6620">该换了</text>
+  </g>
+  <g>
+    <rect x="0.0" y="765.0" width="390.0" height="79.0" rx="0.0" fill="none" opacity="0" stroke="#efe9dd" stroke-width="1"/>
+    <text x="42.0" y="813.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="650" fill="#8a857a">首页</text>
+    <svg x="43.5" y="779.0" width="21.0" height="21.0" viewBox="0 0 24 24" fill="none" stroke="#8a857a" stroke-width="2" stroke-linecap="butt"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>
+    <text x="136.0" y="813.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="650" fill="#8a857a">实时</text>
+    <svg x="137.5" y="779.0" width="21.0" height="21.0" viewBox="0 0 24 24" fill="none" stroke="#8a857a" stroke-width="2" stroke-linecap="butt"><circle cx="12" cy="12" r="3"></circle><path d="M5 12a7 7 0 0 1 14 0"></path><path d="M2 12a10 10 0 0 1 20 0"></path></svg>
+    <rect x="198.0" y="774.0" width="88.0" height="50.0" rx="18.0" fill="#dce6df"/>
+    <text x="230.0" y="813.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="650" fill="#5c7c6c">用药</text>
+    <svg x="231.5" y="779.0" width="21.0" height="21.0" viewBox="0 0 24 24" fill="none" stroke="#5c7c6c" stroke-width="2" stroke-linecap="butt"><rect x="3.2" y="8.4" width="17.6" height="7.2" rx="3.6" transform="rotate(-45 12 12)"></rect><path d="M9 15l6-6"></path></svg>
+    <text x="324.0" y="813.6" font-family="PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif" font-size="12" font-weight="650" fill="#8a857a">周报</text>
+    <svg x="325.5" y="779.0" width="21.0" height="21.0" viewBox="0 0 24 24" fill="none" stroke="#8a857a" stroke-width="2" stroke-linecap="butt"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-7"></path><path d="M22 20H2"></path></svg>
+  </g>
+  
+</svg>
